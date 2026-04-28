@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "AI Payment Guardian",
+  "version": "1.0",
+  "description": "Intercepts and analyzes payment actions using AI to protect against fraudulent transactions.",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://generativelanguage.googleapis.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "css": ["styles.css"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

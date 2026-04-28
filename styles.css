@@ -1,0 +1,177 @@
+/* AI Payment Guardian - Scoped Styles */
+
+#aipg-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 2147483647; /* Max z-index */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#aipg-overlay.aipg-show {
+  opacity: 1;
+}
+
+.aipg-modal {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  color: #f8fafc;
+  transform: scale(0.95);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#aipg-overlay.aipg-show .aipg-modal {
+  transform: scale(1);
+}
+
+.aipg-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #334155;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.aipg-header-icon {
+  font-size: 24px;
+}
+
+.aipg-header-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.aipg-body {
+  padding: 24px;
+}
+
+.aipg-status {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.aipg-score {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.aipg-level {
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Status Colors */
+.aipg-state-loading .aipg-header-title { color: #94a3b8; }
+.aipg-state-safe .aipg-score, .aipg-state-safe .aipg-level { color: #22c55e; }
+.aipg-state-warning .aipg-score, .aipg-state-warning .aipg-level { color: #f59e0b; }
+.aipg-state-blocked .aipg-score, .aipg-state-blocked .aipg-level { color: #ef4444; }
+
+/* Pulse animation for loading */
+@keyframes aipg-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.aipg-state-loading .aipg-score {
+  font-size: 1.5rem;
+  color: #94a3b8;
+  animation: aipg-pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.aipg-explanation {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #cbd5e1;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #0f172a;
+  border-radius: 8px;
+}
+
+.aipg-issues-title {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.aipg-issues-list {
+  margin: 0;
+  padding-left: 20px;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.aipg-footer {
+  padding: 16px 24px;
+  background: #0f172a;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.aipg-btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.aipg-btn-primary {
+  background: #6366f1;
+  color: white;
+}
+
+.aipg-btn-primary:hover {
+  background: #4f46e5;
+}
+
+.aipg-btn-danger {
+  background: #ef4444;
+  color: white;
+}
+
+.aipg-btn-danger:hover {
+  background: #dc2626;
+}
+
+.aipg-btn-secondary {
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid #334155;
+}
+
+.aipg-btn-secondary:hover {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+.aipg-hidden {
+  display: none !important;
+}
