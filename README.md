@@ -11,6 +11,17 @@ AI Payment Guardian is a Chrome extension designed to monitor and protect your o
 5. Drag and drop the extracted folder directly into the extensions page, OR click **Load unpacked** and select the folder.
 6. The extension is now installed and ready to use!
 
+## Process Flow
+
+```mermaid
+graph TD;
+    A[User visits Checkout Page] --> B[Content Script Detects Payment Fields];
+    B --> C[AI Analyzes Page Content for Scams/Phishing];
+    C -->|High Risk| D[Alert Displayed to User via Popup];
+    C -->|Safe| E[Payment Proceeds normally];
+    D --> F[User can choose to block or proceed];
+```
+
 ## Features
 - AI-powered payment monitoring
 - Real-time alerts
