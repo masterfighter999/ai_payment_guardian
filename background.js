@@ -39,8 +39,7 @@ async function handleRiskAnalysis(pageData) {
 }
 
 async function callGeminiAPI(pageData, apiKey) {
-  const models = ['gemini-3-flash-preview'];
-  let lastError = null;
+  const model = 'gemini-3-flash-preview';
 
   const systemInstruction = `You are an AI security analyst designed to protect users from online payment fraud, scam merchants, phishing attempts, and deceptive checkout flows.
 
@@ -140,70 +139,49 @@ Output:
 --------------------------------------------------
 Always respond with JSON only.`;
 
-
-
-  for (const modelName of models) {
-    try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
-
-      const fullPrompt = `SYSTEM INSTRUCTIONS:
-${systemInstruction}
-
---------------------------------------------------
-USER DATA TO ANALYZE:
-Domain: ${pageData.domain}
+  const userMessage = `Domain: ${pageData.domain}
 Merchant Name: ${pageData.merchant_name}
 Page Title: ${pageData.page_title}
 Payment Info Found: ${pageData.payment_info}
 Visible Text Snippet: ${pageData.visible_text}`;
 
-      const payload = {
-        contents: [{
-          parts: [{ text: fullPrompt }]
-        }],
-        tools: [{
-          google_search: {}
-        }],
-        generationConfig: {
-          temperature: 0.1
-        }
-      };
+  try {
+    const url = `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions`;
 
-      // Only add these if using a 1.5 or 2.0 model
-      if (modelName.includes('1.5') || modelName.includes('2.0')) {
-        payload.systemInstruction = {
-          parts: [{ text: systemInstruction }]
-        };
-        payload.generationConfig.responseMimeType = "application/json";
-      }
+    const payload = {
+      model: model,
+      messages: [
+        { role: 'system', content: systemInstruction },
+        { role: 'user', content: userMessage }
+      ],
+      temperature: 0.1
+    };
 
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify(payload)
+    });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || `HTTP ${response.status}`);
-      }
-
-      const data = await response.json();
-      let textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-      if (!textResponse) continue;
-
-      // Clean up markdown if the model didn't obey the "JSON only" rule
-      textResponse = textResponse.replace(/```json/g, '').replace(/```/g, '').trim();
-
-      return JSON.parse(textResponse);
-    } catch (err) {
-      console.warn(`Failed with ${modelName}:`, err.message);
-      lastError = err;
-      continue;
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error?.message || `HTTP ${response.status}`);
     }
-  }
 
-  throw new Error(`Failed to analyze risk with any available model: ${lastError.message}`);
+    const data = await response.json();
+    let textResponse = data.choices?.[0]?.message?.content;
+
+    if (!textResponse) throw new Error('Empty response from API');
+
+    // Clean up markdown if present
+    textResponse = textResponse.replace(/```json/g, '').replace(/```/g, '').trim();
+
+    return JSON.parse(textResponse);
+  } catch (err) {
+    throw new Error(`Failed to analyze risk: ${err.message}`);
+  }
 }
 
