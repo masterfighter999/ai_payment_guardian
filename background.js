@@ -39,7 +39,7 @@ async function handleRiskAnalysis(pageData) {
 }
 
 async function callGeminiAPI(pageData, apiKey) {
-  const models = ['gemini-3-flash'];
+  const models = ['gemini-3-flash-preview'];
   let lastError = null;
 
   const systemInstruction = `You are an AI security analyst designed to protect users from online payment fraud, scam merchants, phishing attempts, and deceptive checkout flows.
@@ -144,7 +144,7 @@ Always respond with JSON only.`;
 
   for (const modelName of models) {
     try {
-      const url = `https://generativelanguage.googleapis.com/v1alpha/models/${modelName}:generateContent?key=${apiKey}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
 
       const fullPrompt = `SYSTEM INSTRUCTIONS:
 ${systemInstruction}
