@@ -144,7 +144,7 @@ Always respond with JSON only.`;
 
   for (const modelName of models) {
     try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+      const url = `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${apiKey}`;
 
       const fullPrompt = `SYSTEM INSTRUCTIONS:
 ${systemInstruction}
