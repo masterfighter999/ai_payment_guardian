@@ -146,22 +146,32 @@ Payment Info Found: ${pageData.payment_info}
 Visible Text Snippet: ${pageData.visible_text}`;
 
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
     const payload = {
-      model: model,
-      messages: [
-        { role: 'system', content: systemInstruction },
-        { role: 'user', content: userMessage }
+      systemInstruction: {
+        parts: [{ text: systemInstruction }]
+      },
+      contents: [
+        {
+          role: 'user',
+          parts: [{ text: userMessage }]
+        }
       ],
-      temperature: 0.1
+      generationConfig: {
+        temperature: 0.1,
+        responseMimeType: "application/json"
+      },
+      tools: [
+        { googleSearch: {} }
+      ]
     };
 
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
+        'x-goog-api-key': apiKey
       },
       body: JSON.stringify(payload)
     });
@@ -172,7 +182,7 @@ Visible Text Snippet: ${pageData.visible_text}`;
     }
 
     const data = await response.json();
-    let textResponse = data.choices?.[0]?.message?.content;
+    let textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!textResponse) throw new Error('Empty response from API');
 
